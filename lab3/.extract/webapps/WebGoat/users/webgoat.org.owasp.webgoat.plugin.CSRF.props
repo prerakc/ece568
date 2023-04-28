@@ -1,0 +1,10 @@
+#webgoat
+#Sun Mar 19 14:08:14 EDT 2023
+Cross\ Site\ Request\ Forgery\ (CSRF).viewedSource=false
+Cross\ Site\ Request\ Forgery\ (CSRF).viewedParameters=false
+Cross\ Site\ Request\ Forgery\ (CSRF).numVisits=21
+Cross\ Site\ Request\ Forgery\ (CSRF).viewedCookies=false
+Cross\ Site\ Request\ Forgery\ (CSRF).viewedLessonPlan=false
+Cross\ Site\ Request\ Forgery\ (CSRF).completed=true
+Cross\ Site\ Request\ Forgery\ (CSRF).maxHintLevel=0
+Cross\ Site\ Request\ Forgery\ (CSRF).viewedHtml=false

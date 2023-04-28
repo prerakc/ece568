@@ -1,0 +1,44 @@
+#Prerak Chaudhari, 1005114760, prerak.chaudhari@mail.utoronto.ca
+
+Part 1 Explanation:
+-------------------
+
+Query for the IPv4 address of utoronto.ca using: dig utoronto.ca
+
+This command will also tell you the domain's name servers and their corresponding IPv4 addresses.
+
+Query for the mail servers of the domain and their corresponding IPv4 addresses as follows:
+1. dig mx utoronto.ca
+2. dig utoronto-ca.mail.protection.outlook.com
+
+Direct dig to the local BIND server using: dig @127.0.0.1 -p <listen-on port> utoronto.ca
+
+Part 2 Explanation:
+-------------------
+
+To build the proxy server that forwards DNS queries from dig to BIND, and forwards DNS replies from BIND to dig, the python module "socket" is used.
+
+Dig uses UDP by default to send packets unless otherwise specified.
+
+Thus, the proxy program opens a UDP server socket, and upon recieving data, opens a UDP client socket to forward the data to the BIND server socket.
+
+After recieving a reply from the BIND server, the response is sent back to the dig client.
+
+Part 3 Explanation:
+-------------------
+
+When dig sends a query for the domain "example.com", the proxy server spoofs the DNS reply by changing the IPv4 address of the domain to "1.2.3.4" and the name servers to "ns.dnslabattacker.net".
+
+Part 4 Explanation:
+-------------------
+
+A DNS query is first sent for the "example.com" domain.
+
+The request and response are stored and used as templates for the attack vectors.
+
+The program then loops the following algorithm:
+1. Send a DNS query for a random subdomain of "example.com"
+2. Iterate through all possible transaction ids and flood DNS responses to the BIND server where the name server in the sent packets is "ns.dnslabattacker.net"
+3. Send a DNS query for the "example.com" domain and check that the cached name server has been changed.
+
+The loop ends when cache poisoning has been detected.

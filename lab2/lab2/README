@@ -1,0 +1,17 @@
+#Prerak Chaudhari, 1005114760, prerak.chaudhari@mail.utoronto.ca
+
+generateQRcode.c:
+
+I used the urlEncode() and base32_encode() functions to encode the user specified
+parameters. Then I used a format string to generate the desired URI.
+
+validateQRcode.c:
+
+I followed the lecture slides and given RFC document to create the HMAC. The SHA-1 hashes
+were calculated as per the handout example. The key and message parameters of the HMAC
+algorithm are the respective converted byte array representations of the secret hex string
+and time step.
+
+mobile_mfa.py:
+
+I referenced the existing codebase to create the requested functions.

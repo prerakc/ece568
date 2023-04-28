@@ -1,0 +1,44 @@
+#Prerak Chaudhari, 1005114760, prerak.chaudhari@mail.utoronto.ca
+
+Target 1:
+This is a simple buffer overflow caused by the fact that strcpy does not check for bounds
+and keeps copying until it reaches a null terminating character. Using gdb, the address of
+the buffer array in lab_main and lab_main's program counter are found. Then, the buffer is
+overflown with the shellcode, NOPS, and the buffer's address to eventually overwrite the 
+address stored in the program counter and cause the shell program to execute when lab_main 
+returns to its caller.
+
+Target 2:
+Here, an array, arg, is passed into a function which copies it into its local buffer
+variable. The number of bytes copied is min(272, strlen(arg)). After using gdb to determine
+the address of the local buffer and the function's program counter, we will require more than
+272 bytes to reach the counter from the buffer. Luckily, there are some variables which are
+stored between these two in memory. Specifically i and len which are respectively responsible
+for keeping track of the current buffer element being written to and the total number of
+bytes that will be copied. These are located less than 272 bytes away from the buffer so we
+can overflow it and change these values to allow us to write more than 272 bytes onto the
+stack. A caveat is that as part of overwriting the length variable, the input array
+prematurely introduces null terminating characters (i.e zeros) which causes the number of
+characters returned by strlen() to be less than the actual length of the array. To ensure
+that the buffer continues copying past these bytes in order to overwrite the program counter,
+we can leverage environment variables to record where these null values.
+
+Target 3:
+This is similar to the scenario in target 1. The difference is that buffer starts being
+copied into 4 bytes higher than its memory address. Additionally, only min(88, strlen(arg))
+bytes are copied from the input array into the buffer. Luckily, according to gdb memory
+address measurements, the buffer and program counter are located within 88 bytes of
+one another. In conclusion, the same strategy employed in target 1 can also be used here,
+but instead of the program counter's value being overwritten to the memory address of the
+buffer, it is instead changed to the buffer's memory address + 4 bytes.
+
+Target 4:
+This is a similar scenario to target 2. The primary difference is that in this situation,
+the index is not used to directly load and store elements across the input array and buffer.
+Rather, pointer arithmetic is used to copy bytes from the input array to the buffer.
+Additionally, the locations of the index and length variables are switched in memory.
+As such, instead of fast forwarding the index a few elements as in target 2, we will be
+decreasing it once it is the same value as the length. Notice that at this moment, there are
+still 19 elements left to be copied into the local buffer so we decrease the index by that
+much. Also, once again, we will be leveraging environment variables to track premature null
+terminating characters in our input array.

